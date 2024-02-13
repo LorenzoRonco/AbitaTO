@@ -1,8 +1,14 @@
+Website developed for the "Introduction to Web Application" exam at Politecnico di Torino. The project was graded with the highest score.
+You can find the exam outline in the README2 file. 
+
+The website was deployed here (expired after 3 months):
 https://lorenzoronco.pythonanywhere.com/
 
 
-CREDENZIALI UTENTI:
 
+Here there are some accounts in order to try the website:
+
+CREDENZIALI UTENTI:
 
 Mail: ben02@gmail.com
 Username: ben02

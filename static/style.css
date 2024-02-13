@@ -1,0 +1,158 @@
+#mybody {
+    background-color: #FFFAFA;
+}
+
+#mylogo {
+    height: 4.5rem;
+    vertical-align: middle;
+    padding-left: 1.75rem;
+}
+
+.my_nav_text {
+    color: #FFFAFA; 
+}
+
+.mynavbar {
+    background-color: #10898d;
+    height: 7rem;
+}
+
+.myForm {
+    background-color: #d5e2e1;
+}
+
+.mybutton {
+    background-color: #10898d;
+    border: none;
+    border-radius: 50%;
+    bottom: 30px;
+    color: white;
+    height: 60px;
+    position: fixed;
+    right: 30px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    width: 60px;
+}
+
+.my_modal_background {
+    background-color: #e0e1dd;
+}
+
+.my_card_header {
+    background-color:  #10898d;
+    color: #FFFAFA; 
+}
+
+.my_card_body{
+    background-color:  #d5e2e1;
+}
+
+#myFilterIcon{
+    margin-bottom: 0.10rem;
+}
+
+.my_card{
+    object-fit: cover;
+    height:100px;
+}
+
+.my_404_icon{
+    width: 7rem; /* Imposta la larghezza desiderata */
+  height: auto;
+}
+
+.usrimg {
+    display: inline;
+    height: 40px;
+    vertical-align: middle;
+    margin: 0.5rem 0.5rem 0.5rem 0rem;
+}
+
+#devimg {
+    width: 200px; /* Sostituisci con la larghezza desiderata */
+    height: 200px; /* Sostituisci con l'altezza desiderata */
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.myTypeText{
+    font-size: 1.1rem;
+}
+
+.myRoomsIcon{
+    display: inline;
+    height: 25px;
+    vertical-align: middle;
+}
+
+.myCheckIcon{
+    display: inline;
+    height: 23px;
+    vertical-align: middle;
+}
+
+.myCheckIconVisit{
+    display: inline;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.myfurnitureIcon{
+    display: inline;
+    height: 25px;
+    vertical-align: middle;
+}
+
+.myNotCheckIcon{
+    display: inline;
+    height: 23px;
+    vertical-align: middle;
+}
+
+.myNotCheckIconVisit{
+    display: inline;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.myUsernameText{
+    font-size: 0.9rem;
+}
+
+#myPostRightAside{
+    flex-shrink: 0;
+}
+
+#MyUsrIcon{
+    width:40px; 
+    height:40px
+}
+
+.myFormButton{
+    background-color:  #10898d;
+}
+
+.MyVisitCard{
+    width: 23rem;
+}
+
+hr.rounded {
+    border-top: 4px solid #bbb;
+    border-radius: 5px;
+  }
+
+.MyBookedVisitCard{
+    width: 23rem;
+}
+
+.MyCardCarousel{
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#linkedinIcon{
+    color: #0077B5;
+}

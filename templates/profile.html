@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% block title %}Pagina personale di {{posts.Username}}{% endblock %}
+{% block profile_active %}active{% endblock %}
+
+{% block content %}
+<main>
+    {%if not visits_user and current_user.tipo==0%}
+        <div class="alert alert-primary d-flex align-items-center" role="alert">
+            <img class="p-2 my_404_icon" src="{{ url_for('static', filename='nothing_found.png') }}" alt="Nessuna annuncio trovato">
+            <div>
+            <h5>Non hai prenotazioni attive</h5>
+            </div>
+        </div>
+    {%else%}
+    {%if visits_user%}
+    <div>
+        <div>
+            <h3>Le tue prenotazioni:</h3>
+        </div>
+        <div class="d-flex flex-wrap">
+        {% for visit in visits_user %}
+        <div class="card MyBookedVisitCard pt-3 m-3">
+            <div class="d-flex justify-content-center mt-2 MyCardCarousel">
+                <div id="carouselExampleIndicators{{visit.ID_annuncio}}" class="carousel slider mx-auto">
+                    <div class="carousel-indicators">
+                        {%for photo in visit.Photos%}
+                        {%if loop.index==1%}
+                        <button type="button" data-bs-target="#carouselExampleIndicators{{visit.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" class="active" aria-current="true" aria-label="Slide {{loop.index}}"></button>
+                        {%else%}
+                        <button type="button" data-bs-target="#carouselExampleIndicators{{visit.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" aria-label="Slide {{loop.index}}"></button>
+                        {%endif%}
+                        {%endfor%}
+                    </div>
+                    <div class="carousel-inner">
+                        {%for photo in visit.Photos%}
+                        <div class="carousel-item {%if loop.index==1%} active{%endif%}">
+                        <a href="{{url_for('single_post', ID_annuncio=visit.ID_annuncio)}}"><img src="{{ url_for('static', filename= photo ) }}" class="d-block w-100" alt="Questa è un immagine dell'annuncio"></a>
+                        </div>
+                        {%endfor%}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{visit.ID_annuncio}}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{visit.ID_annuncio}}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{visit.Titolo}}</h5>
+                <p class="card-text">{{visit.Indirizzo}}</p>
+                <ul>
+                <li class="card-text">Mail locatore: {{visit.Mail_utente}}</li>
+                <li class="card-text">Data: {{visit.Data}}</li>
+                <li class="card-text">Fascia Oraria: {{visit.Ora}}</li>
+                <li class="card-text">Modalità: {{visit.Modalità}}</li>
+                {% if visit.Stato=="accettata"%}
+                <li><div class="d-flex align-items-center">Stato:<img class="myCheckIconVisit ps-2" src="{{ url_for('static', filename='check.png') }}" alt="Accettata" title="Accettata"></div></li>
+                    {%elif visit.Stato=="rifiutata"%}
+                <li><div class="d-flex align-items-center">Stato:<img class="myNotCheckIconVisit ps-2" src="{{ url_for('static', filename='not_check.png') }}" alt="Rifiutata" title="Rifiutata"></div></li>
+                    {%else%}
+                <li><div class="d-flex align-items-center">Stato:<div class="ms-2"><div class="spinner-border text-info spinner-border-sm" role="status" alt="Richiesta" title="Richiesta"></div></div></div></li>
+                    {%endif%}
+                {%if visit.Stato=="rifiutata"%}
+                <li>Motivazione: {{visit.Motivazione}}</li>
+                {%endif%}
+                </ul>
+            </div>
+        </div>
+        {%endfor%}
+        </div>
+    </div>
+    {%endif%}
+    {%endif%}
+
+    {%if current_user.tipo==1%}
+    {%if not posts%}
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+        <img class="p-2 my_404_icon" src="{{ url_for('static', filename='nothing_found_2.png') }}" alt="Nessun annuncio trovato">
+        <div>
+          Non hai pubblicato annunci
+        </div>
+      </div>
+    {%else%}
+    {% if posts | selectattr("Disponibile", "equalto", 1) | list %} <!--filter posts selecting only the ones with 'Disponibile'==1 (only the ones available)-->
+    <div>
+        {%if visits_user%}
+        <hr class="rounded">
+        {%endif%}
+        <h3  class="mt-2">I tuoi annunci disponibili:</h3>
+    </div>
+    <div>
+        {% for post in posts %}
+            {%if post.Disponibile==1%}
+            <article class="row border p-2 mx-2 my-4">
+            <div class="col-lg-2 col-md-6 col-sm-12 px-0">
+                <div id="carouselExampleIndicators{{post.ID_annuncio}}" class="carousel slide">
+                    <div class="carousel-indicators">
+                      {%for photo in post.Photos%}
+                      {%if loop.index==1%}
+                      <button type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" class="active" aria-current="true" aria-label="Slide {{loop.index}}"></button>
+                      {%else%}
+                      <button type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" aria-label="Slide {{loop.index}}"></button>
+                      {%endif%}
+                      {%endfor%}
+                    </div>
+                    <div class="carousel-inner">
+                      {%for photo in post.Photos%}
+                      <div class="carousel-item {%if loop.index==1%} active{%endif%}">
+                        <a href="{{url_for('single_post', ID_annuncio=post.ID_annuncio)}}"><img src="{{ url_for('static', filename= photo ) }}" class="d-block w-100" alt="Questa è un immagine dell'annuncio"></a>
+                      </div>
+                      {%endfor%}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-10 col-md-6 col-sm-12">
+                <section class="mt-2">
+                    <div class="d-flex align-items-start">
+                      <div class="d-flex flex-column justify-content-start">
+                          <h5 class="mt-auto"><a class="link link-dark link-offset-2 link-underline-dark link-underline-opacity-0 link-underline-opacity-50-hover" aria-current="page" 
+                                        href="{{url_for('single_post', ID_annuncio=post.ID_annuncio)}}">{{post.Titolo}}</a></h5>
+                          <p class="fw-medium fst-italic pb-3">{{ post.Indirizzo |e }}</p>
+                      </div>
+                    </div>
+                    {% if post.Visite%}
+                    <h5>Prenotazioni attive:</h5>
+                    <div class="d-flex flex-wrap">
+                    {%for visit in post.Visite%}
+                    <div class="card MyVisitCard m-2">
+                        <div class="card-header pb-0 my_card_header">
+                            <h5 class="card-title">Prenotazione #{{loop.index}}</h5>
+                        </div>
+                        <div class="card-body border border-1">
+                            <img class="usrimg rounded-circle" src="{{ url_for('static', filename=visit.Img_prof) }}"
+                                        alt="Questa è l'immagine dell'utente {{ post.Username |e }}">
+                            <ul class="col-9">
+                                <li>Mail: {{visit.Mail_utente}}</li>
+                                <li>Username: @{{visit.Username}}</li>
+                                <li>Data: {{visit.Data}}</li>
+                                <li>Ora: {{visit.Ora}}</li>
+                                <li>Modalità: {{visit.Modalità}}</li>
+                                    {% if visit.Stato=="accettata"%}
+                                <li><div class="d-flex align-items-center">Stato:<img class="myCheckIconVisit ps-2" src="{{ url_for('static', filename='check.png') }}" alt="Accettata" title="Accettata"></div></li>
+                                    {%elif visit.Stato=="rifiutata"%}
+                                <li><div class="d-flex align-items-center">Stato:<img class="myNotCheckIconVisit ps-2" src="{{ url_for('static', filename='not_check.png') }}" alt="Rifiutata" title="Rifiutata"></div></li>
+                                    {%else%}
+                                <li><div class="d-flex align-items-center">Stato:<div class="ms-2"><div class="spinner-border text-info spinner-border-sm" role="status" alt="Richiesta" title="Richiesta"></div></div></div></li>
+                                    {%endif%}
+                                {%if visit.Stato=="rifiutata"%}
+                                <li>Motivazione: {{visit.Motivazione}}</li>
+                                {%endif%}
+                            </ul>
+                            {%if visit.Stato=="richiesta"%}
+                            <p class="d-inline-flex gap-1">
+                                <button class="btn btn-primary myFormButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample{{visit.ID_visita}}" aria-expanded="false" aria-controls="collapseExample{{visit.ID_visita}}">
+                                    Gestisci
+                                </button>
+                            </p>
+                            <div class="collapse" id="collapseExample{{visit.ID_visita}}">
+                                <div class="card card-body">
+                                    <form id="MyForm" class=" mt-3" action="{{url_for('manage_visit', ID_visit=visit.ID_visita)}}" method="POST" enctype="multipart/form-data">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="stato_aggiornato" id="acceptRadio" value="accettata" checked>
+                                            <label class="form-check-label" for="acceptRadio">Accetta</label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input" type="radio" name="stato_aggiornato" id="declineRadio" value="rifiutata">
+                                            <label class="form-check-label" for="declineRadio">Rifiuta</label>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="reason">Motivazione:</label>
+                                            <textarea class="form-control" id="reason" rows="3" placeholder="In caso di rifiuto, inserisci una motivazione:" maxlength="200" name="Motivazione"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary myFormButton">Conferma</button>
+                                    </form>
+                                </div>
+                            </div>  
+                            {%endif%}
+                        </div>
+                    </div>
+                    {%endfor%}
+                    </div>
+                    {%else%}
+                    <h5>Non ci sono prenotazioni per questo annuncio</h5>
+                    {%endif%}
+                </section>
+                </div>
+            </article>
+            {%endif%}
+        {% endfor %}
+    </div>
+    {%endif%}
+
+    {% if posts | selectattr("Disponibile", "equalto", 0) | list %} <!--filter posts selecting only the ones with 'Disponibile'==0 (only the ones not available)-->
+    <div>
+        {% if posts | selectattr("Disponibile", "equalto", 1) | list %}
+        <hr class="rounded">
+        {%endif%}
+        <h3  class="mt-2">I tuoi annunci non disponibili:</h3>
+    </div>
+    <div>
+        
+        {% for post in posts %}
+            {%if post.Disponibile==0%}
+            <article class="row border p-2 mx-2 my-4">
+                <div class="col-lg-2 col-md-6 col-sm-12 px-0">
+                    <div id="carouselExampleIndicators{{post.ID_annuncio}}" class="carousel slide">
+                        <div class="carousel-indicators">
+                          {%for photo in post.Photos%}
+                          {%if loop.index==1%}
+                          <button type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" class="active" aria-current="true" aria-label="Slide {{loop.index}}"></button>
+                          {%else%}
+                          <button type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide-to="{{loop.index-1}}" aria-label="Slide {{loop.index}}"></button>
+                          {%endif%}
+                          {%endfor%}
+                        </div>
+                        <div class="carousel-inner">
+                          {%for photo in post.Photos%}
+                          <div class="carousel-item {%if loop.index==1%} active{%endif%}">
+                            <a href="{{url_for('single_post', ID_annuncio=post.ID_annuncio)}}"><img src="{{ url_for('static', filename= photo ) }}" class="d-block w-100" alt="Questa è un immagine dell'annuncio"></a>
+                          </div>
+                          {%endfor%}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{post.ID_annuncio}}" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-10 col-md-6 col-sm-12">
+                    <section class="mt-2">
+                        <div class="d-flex align-items-start">
+                          <div class="d-flex flex-column justify-content-start">
+                              <h5 class="mt-auto"><a class="link link-dark link-offset-2 link-underline-dark link-underline-opacity-0 link-underline-opacity-50-hover" aria-current="page" 
+                                            href="{{url_for('single_post', ID_annuncio=post.ID_annuncio)}}">{{post.Titolo}}</a></h5>
+                              <p class="fw-medium fst-italic pb-3">{{ post.Indirizzo |e }}</p>
+                          </div>
+                        </div>
+                        {% if post.Visite%}
+                        <h5>Prenotazioni attive:</h5>
+                        <div class="d-flex flex-wrap">
+                        {%for visit in post.Visite%}
+                        <div class="card MyVisitCard m-2">
+                            <div class="card-header pb-0 my_card_header">
+                                <h5 class="card-title">Prenotazione #{{loop.index}}</h5>
+                            </div>
+                            <div class="card-body">
+                                <img class="usrimg rounded-circle" src="{{ url_for('static', filename=visit.Img_prof) }}"
+                                            alt="Questa è l'immagine dell'utente {{ post.Username |e }}">
+                                <ul class="col-9">
+                                    <li>Mail: {{visit.Mail_utente}}</li>
+                                    <li>Username: @{{visit.Username}}</li>
+                                    <li>Data: {{visit.Data}}</li>
+                                    <li>Ora: {{visit.Ora}}</li>
+                                    <li>Modalità: {{visit.Modalità}}</li>
+                                    {% if visit.Stato=="accettata"%}
+                                    <li><div class="d-flex align-items-center">Stato:<img class="myCheckIconVisit ps-2" src="{{ url_for('static', filename='check.png') }}" alt="Accettata" title="Accettata"></div></li>
+                                        {%elif visit.Stato=="rifiutata"%}
+                                    <li><div class="d-flex align-items-center">Stato:<img class="myNotCheckIconVisit ps-2" src="{{ url_for('static', filename='not_check.png') }}" alt="Rifiutata" title="Rifiutata"></div></li>
+                                        {%else%}
+                                    <li><div class="d-flex align-items-center">Stato:<div class="ms-2"><div class="spinner-border text-info spinner-border-sm" role="status" alt="Richiesta" title="Richiesta"></div></div></div></li>
+                                        {%endif%}
+                                    {%if visit.Stato=="rifiutata"%}
+                                    <li>Motivazione: {{visit.Motivazione}}</li>
+                                    {%endif%}
+                                </ul>
+                                {%if visit.Stato=="richiesta"%}
+                                <p class="d-inline-flex gap-1">
+                                    <button class="btn btn-primary myFormButton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample{{visit.ID_visita}}" aria-expanded="false" aria-controls="collapseExample{{visit.ID_visita}}">
+                                        Gestisci
+                                    </button>
+                                </p>
+                                <div class="collapse" id="collapseExample{{visit.ID_visita}}">
+                                    <div class="card card-body">
+                                        <form id="MyForm" class=" mt-3" action="{{url_for('manage_visit', ID_visit=visit.ID_visita)}}" method="POST" enctype="multipart/form-data">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="stato_aggiornato" id="acceptRadio" value="accettata" checked>
+                                                <label class="form-check-label" for="acceptRadio">Accetta</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input" type="radio" name="stato_aggiornato" id="declineRadio" value="rifiutata">
+                                                <label class="form-check-label" for="declineRadio">Rifiuta</label>
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <label for="reason">Motivazione:</label>
+                                                <textarea class="form-control" id="reason" rows="3" placeholder="In caso di rifiuto, inserisci una motivazione:" maxlength="200" name="Motivazione"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary myFormButton">Conferma</button>
+                                        </form>
+                                    </div>
+                                </div>  
+                                {%endif%}
+                            </div>
+                        </div>
+                        {%endfor%}
+                        </div>
+                        {%else%}
+                        <h5>Non ci sono prenotazioni per questo annuncio</h5>
+                        {%endif%}
+                    </section>
+                    </div>
+                </article>
+            {%endif%}
+        {% endfor %}
+    </div>
+    {%endif%}
+    {%endif%}
+    {%endif%}
+  </main>
+
+{% endblock %}

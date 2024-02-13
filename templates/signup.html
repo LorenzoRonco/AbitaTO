@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Iscriviti{% endblock %}
+{% block signup_active %}active{% endblock %}
+
+{% block content %}
+    <a href="/">Torna indietro</a>
+    <div class="col-4 offset-md-4 p-4 border rounded myForm">
+        <form action="/iscriviti" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="mailInput" class="form-label">Mail</label>
+                <input type="email" class="form-control" name="mail_utente" id="mailInput" required>
+            </div>
+            <div class="mb-3">
+                <label for="mailInput" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" id="usernameInput" required>
+            </div>
+            <div class="mb-3">
+                <label for="passwordInput" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="passwordInput" required>
+                <div id="passwordHelp" class="form-text">Non condivideremo mai la tua password con nessun altro.</div>
+            </div>
+            <div class="mb-3">
+                <label for="immagineInput" class="form-label">Immagine profilo</label>
+                <input type="file" class="form-control" name="img_prof" id="imgInput">
+            </div>
+            <div class="form-check form-switch mb-3">
+                <label class="form-label" for="tipoInput">Registrati come locatore</label>
+                <input class="form-check-input" type="checkbox" role="switch" name="tipo" id="tipoInput">
+            </div>
+            <button type="submit" class="btn btn-primary myFormButton">Registrati</button>
+        </form>
+    </div>
+{% endblock %}

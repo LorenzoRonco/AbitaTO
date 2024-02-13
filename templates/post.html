@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block title %}Annuncio di {{post.Username}}{% endblock %}
+{% block post_active %}active{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row justify-content-end">
+    <main class="col-lg-10 col-md-12">
+      <div class="row border-top p-2 mx-2">
+        <div class="col-lg-3 col-md-6 col-sm-12 px-0">         
+              <div id="carouselExampleIndicators" class="carousel slide">
+                <div class="carousel-indicators">
+                  {%for photo in post.Photos%}
+                  {%if loop.index==1%}
+                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{loop.index-1}}" class="active" aria-current="true" aria-label="Slide {{loop.index}}"></button>
+                  {%else%}
+                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{loop.index-1}}" aria-label="Slide {{loop.index}}"></button>
+                  {%endif%}
+                  {%endfor%}
+                </div>
+                <div class="carousel-inner">
+                  {%for photo in post.Photos%}
+                  <div class="carousel-item {%if loop.index==1%} active{%endif%}">
+                    <img src="{{ url_for('static', filename= photo ) }}" class="d-block w-100" alt="Questa è un immagine dell'annuncio">
+                  </div>
+                  {%endfor%}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+          </div>
+        <div class="col-lg-9 col-md-6 col-sm-12">
+          <section class="mt-2">
+            <div class="d-flex flex-row justify-content-between">
+              <div class="d-flex flex-column justify-content-start">
+                  <div class="d-flex align-items-center">
+                    <img class="usrimg rounded-circle" src="{{ url_for('static', filename=post.Img_prof) }}"
+                    alt="Questa è l'immagine dell'utente {{ post.Username |e }}">
+                    <p class="fs-6 fst-italic pb-0 mb-0 d-flex align-items-center">@{{post.Username |e}}</p>
+                  </div>
+                  <h5 class="mt-auto"><a class="link link-dark link-offset-2 link-underline-dark link-underline-opacity-0 link-underline-opacity-50-hover" aria-current="page" 
+                                href="{{url_for('single_post', ID_annuncio=post.ID_annuncio)}}">{{post.Titolo}}</a></h5>
+                  <p class="fw-medium fst-italic pb-3">{{ post.Indirizzo |e }}</p>
+                  <p>{{ post.Descrizione |e }}</p>
+              </div>
+              <div class="flex-shrink-0 d-flex flex-column justify-content-center ms-2 align-self-start" id="myPostRightAside">
+                <p class="myTypeText d-flex justify-content-center">{{post.Tipo_casa}}</p>
+                <div class="fs-6 d-flex justify-content-center"> 
+                  <img class="myRoomsIcon me-2" src="{{ url_for('static', filename='rooms_icon.png') }}" alt="Numero di locali" title="Numbero di locali">
+                  <p>{{post.Locali}}{% if post.Locali==5%}+{%endif%} local{% if post.Locali==1%}e{%else%}i{%endif%}</p>
+                </div>
+                <div class="d-flex flex-row justify-content-center align-items-center mb-2 fw-bold">
+                  <p class="fs-6 pb-0 mb-0">€ {{post.Prezzo}}/mese </p>
+                </div>
+                <div class="fs-6 d-flex justify-content-center align-items-center"> 
+                  <img class="myFurnitureIcon me-2" src="{{ url_for('static', filename='furniture_icon.png') }}" alt="Arredata" title="Arredata">
+                  {% if post.Arredo==1%}
+                  <img class="myCheckIcon" src="{{ url_for('static', filename='check.png') }}" alt="Arredata" title="Arredata">
+                  {%else%}
+                  <img class="myNotCheckIcon" src="{{ url_for('static', filename='not_check.png') }}" alt="Non Arredata" title="Non Arredata">
+                  {%endif%}
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          {% if current_user.is_authenticated%} <!-- if user is not logged && user is the owner -> show the button to modify the post-->
+          {% if current_user.id==post.id_locatore%}
+            <button type="button" data-bs-toggle="modal" data-bs-target="#createModal" class="btn btn-primary myFormButton mt-2">Modifica annuncio</button>
+            <!--Modal to update the post-->
+            <div class="modal fade" id="createModal" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content my_modal_background">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5">Modifica annuncio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <form action="{{url_for('update_post', ID_annuncio=post.ID_annuncio)}}" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                      <div class="container-fluid">
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="titolo" id="titleInput" placeholder="Titolo dell'annuncio" value="{{post.Titolo}}" required>
+                                <label for="titleInput">Titolo dell'annuncio</label>
+                              </div>
+                            </div>
+                            <div class="col">
+                              <div class="col mt-2">
+                                <div class="input-group">
+                                  <span class="input-group-text">€</span>
+                                  <input type="text" class="form-control" name="prezzo" id="priceInput" placeholder="Affitto mensile" aria-label="Affitto Mensile" value="{{post.Prezzo}}" required>
+                                  <span class="input-group-text">.00</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="indirizzo" id="addressInput" placeholder="Indirizzo" value="{{post.Indirizzo}}" disabled>
+                            <label for="addressInput">Indirizzo</label>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-floating mb-3">
+                                <select class="form-select" id="typeInput" name="tipo_casa" required>
+                                  <option value="Casa indipendente" {%if post.Tipo_casa == "Casa indipendente" %}selected{%endif%}>Casa indipendente</option>
+                                  <option value="Appartamento" {%if post.Tipo_casa == "Appartamento" %}selected{%endif%}>Appartamento</option>
+                                  <option value="Loft" {%if post.Tipo_casa == "Loft" %}selected{%endif%}>Loft</option>
+                                  <option value="Villa" {%if post.Tipo_casa == "Villa" %}selected{%endif%}>Villa</option>
+                                </select>
+                                <label for="typeInput">Tipologia di abitazione</label>
+                              </div>
+                            </div>
+                            <div class="col">
+                              <div class="form-floating mb-3">
+                                <select class="form-select" id="roomsInput" name="locali" required>
+                                  <option value="1" {%if post.Locali == 1 %}selected{%endif%}>1</option>
+                                  <option value="2" {%if post.Locali == 2 %}selected{%endif%}>2</option>
+                                  <option value="3" {%if post.Locali == 3 %}selected{%endif%}>3</option>
+                                  <option value="4" {%if post.Locali == 4 %}selected{%endif%}>4</option>
+                                  <option value="5" {%if post.Locali == 5 %}selected{%endif%}>5+</option>
+                                </select>
+                                <label for="roomsInput">Numero di locali</label>
+                              </div>
+                            </div>
+                          </div>
+                        <div class="form-floating mb-3">
+                          <textarea class="form-control" id="description" rows="3" placeholder="Inserisci una descrizione per l'appartamento" minlength="30" maxlength="200" name="descrizione" required>{{post.Descrizione}}</textarea>
+                          <label for="description">Descrizione</label>
+                        </div>
+                            {% for index in range(5) %}
+                            <div class="mb-3 row align-items-center">
+                              <div class="col-4">
+                              {% if index < post.Photos|length %}
+                                <img class="img-fluid w-100 p-2" src="{{ url_for('static', filename=post.Photos[index]) }}"
+                                    alt="Questa è un'immagine dell'annuncio">
+                              {% endif %}
+                              </div>
+                              <div class="input-group col">
+                                <div class="row justify-content-center">
+                                  <div class="col">
+                                    <label for="imageInput{{index}}">Sostituisci o inserisci nuova immagine</label>
+                                    <input class="form-control" type="file" id="imageInput{{index}}" name="NewImgFile{{index}}">
+                                    {% if index < post.Photos|length %}
+                                    <input type="hidden" name="OldImgFile{{index}}" value="{{post.Photos[index]}}">
+                                    {% endif %}
+                                  </div>
+                                </div>
+                                {% if index < post.Photos|length %}
+                                <div class="form-check row justify-content-center">
+                                  <div class="col mt-3 align-center">
+                                  <input class="form-check-input" type="checkbox" name="DelImg{{index}}" id="DelImg{{index}}" value="{{post.Photos[index]}}">
+                                  <label class="form-check-label" for="DelImg{{index}}">Rimuovi immagine</label>
+                                  </div>
+                                </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                            {% endfor %} 
+                        <div class="form-check form-switch mb-3">
+                          <label class="form-label" for="furnitureInput">La casa è arredata</label>
+                          <input class="form-check-input" type="checkbox" role="switch" name="arredo" id="furnitureInput" {%if post.Arredo==1%}checked{%endif%}>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                          <label class="form-label" for="availableInput">La casa è disponibile</label>
+                          <input class="form-check-input" type="checkbox" role="switch" name="disponibile" id="availableInput" {%if post.Disponibile==1%}checked{%endif%}>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary myFormButton" data-bs-dismiss="modal">Chiudi</button>
+                      <button type="submit" class="btn btn-primary myFormButton">Modifica Annuncio</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {%endif%}
+          {%endif%}
+          </div>
+        </div>
+
+          {% if current_user.is_authenticated%} <!-- if user is not logged || user is the owner -> do not show the form to book a visit-->
+            {% if current_user.id!=post.id_locatore%}
+
+            <div class="card">
+              <div class="card-header pb-0 my_card_header">
+                <h5 class="card-title">Prenota una visita</h5>
+              </div>
+              <div class="card-body my_card_body">
+                <form action="/prenotazione/new" method="POST" enctype="multipart/form-data">
+        
+                  <div class="mb-3 form-group">
+                    <label for="dateTextInput" class="form-label">Seleziona una data</label>
+                    <input class="form-control" type="date" name="Data" id="dateTextInput" min="{{ start_date }}" max="{{ end_date }}" required>
+                  </div>
+                
+
+                  <div class="mb-3 form-group">
+                    <label for="time_slot" class="form-label">Seleziona una fascia oraria:</label>
+                    <select class="form-select" id="time_slot" name="Ora" required>
+                        {% for date in next_week.keys() %}
+                            {% for time_slot in next_week[date] %}
+                                <option value="{{ time_slot }}">{{ date.strftime('%d/%m/%Y') }} : {{ time_slot }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                  </div>
+
+        
+                    <div class="mb-3 form-group">
+                      <label for="selezionaOpzioneTipo">Seleziona un tipo</label>
+                      <select class="form-select" id="selezionaOpzioneTipo" name="Modalità" required>
+                          <option value="0">Presenza</option>
+                          <option value="1">Remoto</option>
+                          
+                      </select>
+                      </div>
+        
+                <button type="submit" class="btn btn-primary myFormButton">Richiedi</button>
+                <input type="number" name="ID_annuncio" value="{{ post.ID_annuncio }}" hidden>
+              </form>
+              </div>
+            </div>
+              
+            {%else%}
+              <div>
+                <h5 class="mt-2">Puoi visualizzare le prenotazioni per la visita sulla tua <a class="link-offset-2 link-underline link-underline-opacity-75 link-opacity-75-hover" aria-current="page" 
+                                            href="{{url_for('profile', username=current_user.username)}}">pagina personale</a></h5>
+            {%endif%}
+          {%else%}
+            <div>
+              <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon src="https://cdn.lordicon.com/ygvjgdmk.json" trigger="hover" style="width:40px;height:40px">
+                </lord-icon>
+                <div>
+                  <h5 class="mb-0">Per prenotare una visita devi effettuare il <a class="link" href="{{url_for('home')}}">login</a></h5>
+                </div>
+              </div>
+            </div>
+          {%endif%}
+    </main>
+  </div>
+</div>
+{% endblock %}
